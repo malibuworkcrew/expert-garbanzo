@@ -36,7 +36,7 @@ class ImportActorLeader extends Actor {
               ImportActorPool.getWorker(date) ! WriteLine(split, mappings)
             }
           }
-          sender() ! Success("Read Complete")
+          sender() ! "Read Complete"
         } else sender() ! Failure(new IllegalArgumentException("File is empty"))
       } else sender() ! Failure(new IllegalArgumentException("File doesn't exist"))
   }

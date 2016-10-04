@@ -1,4 +1,4 @@
-package com.wood.importer
+package com.wood.spenk
 
 import java.io.File
 
@@ -10,28 +10,28 @@ import com.webtrends.harness.health.HealthComponent
 import com.webtrends.harness.service.messages.Ready
 import com.wood.importer.command.ImportDataCommand
 import com.wood.importer.workers.ImportActorPool
+import com.wood.spenk.command.QueryDataCommand
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Try
 
-object ImporterService {
+object SpenkService {
   var baseDir = "../data"
 }
 
-class ImporterService extends SprayService {
-  val importLeaders = context.actorOf(RoundRobinPool(5).props(Props[ImportActorLeader]), "ImportActorLeader")
-  ImporterService.baseDir = Try { context.system.settings.config.getString("base-data-dir") } getOrElse "../data"
-  val baseDir = new File(ImporterService.baseDir)
+class SpenkService extends SprayService {
+  val queryLeaders = context.actorOf(RoundRobinPool(5).props(Props[QueryActor]), "QueryActor")
+  SpenkService.baseDir = Try { context.system.settings.config.getString("base-data-dir") } getOrElse "../data"
+  val baseDir = new File(SpenkService.baseDir)
   baseDir.setWritable(true)
-  ImportActorPool(10, context)
 
   override def serviceReceive = ({
     case Ready(meta) =>
-      log.info("Import service ready to receive")
-      addCommandWithProps(ImportDataCommand.commandName, Props(classOf[ImportDataCommand], importLeaders))
+      log.info("SpenkService ready to receive")
+      addCommandWithProps(QueryDataCommand.commandName, Props(classOf[QueryDataCommand], queryLeaders))
   }: Receive) orElse super.serviceReceive
 
   override def checkHealth: Future[HealthComponent] =
-    Future.successful(HealthComponent("import-service", details = "No health monitored by this service"))
+    Future.successful(HealthComponent("spenk-service", details = "No health monitored by this service"))
 }
