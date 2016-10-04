@@ -13,11 +13,17 @@ import com.wood.importer.workers.ImportActorPool
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.util.Try
+
+object ImporterService {
+  var baseDir = "../data"
+}
 
 class ImporterService extends SprayService {
   implicit val timeout = Timeout(60 seconds)
   val importLeaders = context.actorOf(RoundRobinPool(5).props(Props[ImportActorLeader]), "ImportActorLeader")
-  val baseDir = new File("data")
+  ImporterService.baseDir = Try { context.system.settings.config.getString("base-data-dir") } getOrElse "../data"
+  val baseDir = new File(ImporterService.baseDir)
   baseDir.setWritable(true)
   ImportActorPool(10, context)
 

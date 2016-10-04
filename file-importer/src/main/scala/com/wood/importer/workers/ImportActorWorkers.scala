@@ -4,6 +4,7 @@ import java.io.{File, FileOutputStream, FileWriter, PrintWriter}
 import java.nio.file.{Files, StandardCopyOption}
 
 import akka.actor.Actor
+import com.wood.importer.ImporterService
 
 import scala.io.Source
 
@@ -19,7 +20,7 @@ class ImportActorWorkers extends Actor {
     case WriteLine(line, colMappings) =>
       val date = line(colMappings.date)
       val dateSplit = date.split("-")
-      val file = new File(s"data/${dateSplit(0)}/${dateSplit(1)}/${dateSplit(2)}/$fileName")
+      val file = new File(s"${ImporterService.baseDir}/${dateSplit(0)}/${dateSplit(1)}/${dateSplit(2)}/$fileName")
       file.getParentFile.mkdirs()
       if (file.exists()) {
         val source = Source.fromFile(file, "UTF-8")
