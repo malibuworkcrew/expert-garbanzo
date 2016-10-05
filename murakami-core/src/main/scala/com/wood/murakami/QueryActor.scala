@@ -20,10 +20,10 @@ class QueryActor extends HActor {
     case q: Query =>
       val callback = sender()
       try {
-        // Find all files to read
-        val paths = PathFinder.getPaths(q.filter, fileName)
         // Parse our query
         val combiner = parseCombiner(q)
+        // Find all files to read
+        val paths = PathFinder.getPaths(combiner.filter, fileName)
         // Spin up threads to read each file
         val futures = Future.sequence(paths.map(path => Future {
           val exec = new QueryExecutors(path, combiner.newInstance())
@@ -32,7 +32,8 @@ class QueryActor extends HActor {
         // Combine results into one data set
         futures.onComplete {
           case Success(s) =>
-            if (s.size <= 1) callback ! Success(s.headOption)
+            if (s.size == 1) callback ! s.head.outputString
+            else if (s.isEmpty) callback ! ""
             else {
               val combined = s.tail.foldLeft(s.head) { case (a, b) =>
                 a ++= b
