@@ -4,16 +4,12 @@ import java.io.File
 
 import akka.actor.Props
 import akka.routing.RoundRobinPool
-import akka.util.Timeout
 import com.webtrends.harness.component.spray.SprayService
 import com.webtrends.harness.health.HealthComponent
 import com.webtrends.harness.service.messages.Ready
-import com.wood.importer.command.ImportDataCommand
-import com.wood.importer.workers.ImportActorPool
 import com.wood.spenk.command.QueryDataCommand
 
 import scala.concurrent.Future
-import scala.concurrent.duration._
 import scala.util.Try
 
 object SpenkService {

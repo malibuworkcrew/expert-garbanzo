@@ -2,14 +2,26 @@ package com.wood.spenk.executors
 
 import java.io.File
 
+import com.wood.spenk.query.Combiner
+
+import scala.io.Source
+
 
 case class WriteLine(line: Array[String], colMappings: ColumnMappings)
 case class ColumnMappings(stb: Int, title: Int, provider: Int, date: Int, rev: Int, viewTime: Int)
 
 // Class responsible for finding duplicates and writing new tracks to file
-class QueryExecutors(fileToRead: File) {
-  def execute: Unit = {
-
+class QueryExecutors(fileToRead: File, combiner: Combiner) {
+  def execute: Combiner = {
+    val source = Source.fromFile(fileToRead)
+    try {
+      val lines = source.getLines()
+      while (lines.hasNext) {
+        val line = lines.next()
+        if (line.nonEmpty) combiner += line
+      }
+    } finally source.close()
+    combiner
   }
 
   def lineOrdered(columnMappings: ColumnMappings, line: Array[String]): String = {
