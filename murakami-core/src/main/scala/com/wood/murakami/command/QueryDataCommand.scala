@@ -25,7 +25,7 @@ class QueryDataCommand(queryLeader: ActorRef) extends Command with SprayGet {
           case Some(query) =>
             val p = Promise[BaseCommandResponse[T]]()
             queryLeader ? Query(query.toString, b.getValue[String]("filter"),
-              b.getValue[String]("group")) onComplete {
+              b.getValue[String]("group"), b.getValue[String]("order")) onComplete {
               case Success(resp) => p success CommandResponse[T](Some(resp.asInstanceOf[T]), "text/plain")
               case Failure(f) => p failure CommandException(commandName, f)
             }

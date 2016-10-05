@@ -42,5 +42,11 @@ class ParserTest extends Specification {
       parsed.get.expr mustEqual
         OrExpr(AndExpr(Equality(TITLE,"the matrix"),OrExpr(Equality(STB,"stb1"),Equality(REV,"2.0"))),Equality(DATE,"2014-05-05"))
     }
+
+    "read orders" in {
+      val parsed = Parser.parseOrder("STB,TITLE")
+      if (!parsed.successful) throw new Exception(parsed.toString)
+      parsed.get mustEqual Seq(Fields.STB, Fields.TITLE)
+    }
   }
 }

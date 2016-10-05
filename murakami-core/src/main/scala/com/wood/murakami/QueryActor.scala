@@ -1,6 +1,7 @@
 package com.wood.murakami
 
 import com.webtrends.harness.app.HActor
+import com.wood.murakami.directory.Fields.Field
 import com.wood.murakami.directory.{Fields, PathFinder}
 import com.wood.murakami.executors.QueryExecutors
 import com.wood.murakami.query.{Filter, Parser}
@@ -9,8 +10,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-case class Query(select: String, filter: Option[String], group: Option[String])
+case class Query(select: String, filter: Option[String], group: Option[String], order: Option[String])
 
+// Main class for dealing with queries and spinning off Combiners
 class QueryActor extends HActor {
   val fileName = "formatted.psv"
 
@@ -50,6 +52,11 @@ class QueryActor extends HActor {
   def parseCombiner(query: Query): Combiner = {
     val selects = Parser.parseSelect(query.select)
     if (!selects.successful) throw new IllegalArgumentException(selects.toString)
+    val order: Option[Seq[Field]] = query.order.map { order =>
+      val ord = Parser.parseOrder(order)
+      if (!ord.successful) throw new IllegalArgumentException(ord.toString)
+      ord.get
+    }
     val filter: Option[Filter] = query.filter match {
       case Some(filt) =>
         val pFilter = Parser.parseFilter(filt)
@@ -60,8 +67,8 @@ class QueryActor extends HActor {
     query.group match {
       case Some(g) =>
         val group = Fields.fields.find(_.stringValue == g).get
-        AggregateCombiner(selects.get, filter, group)
-      case None => SelectionCombiner(selects.get, filter)
+        AggregateCombiner(selects.get, filter, group, order)
+      case None => SelectionCombiner(selects.get, filter, order)
     }
   }
 

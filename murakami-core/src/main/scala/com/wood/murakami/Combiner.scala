@@ -3,9 +3,13 @@ package com.wood.murakami
 import com.wood.murakami.directory.Fields.Field
 import com.wood.murakami.query.{Aggregate, Filter, Selector}
 
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
+
 trait Combiner {
   val selector: Seq[Selector]
   val filter: Option[Filter]
+  val order: Option[Seq[Field]]
 
   def +=(line: String): this.type
   def ++=(agg: Combiner): this.type
@@ -14,7 +18,8 @@ trait Combiner {
 }
 
 case class SelectionCombiner(selector: Seq[Selector],
-                             filter: Option[Filter]) extends Combiner {
+                             filter: Option[Filter],
+                             order: Option[Seq[Field]]) extends Combiner {
   var values = Array[Array[String]]()
 
   def +=(line: String): this.type = {
@@ -31,7 +36,7 @@ case class SelectionCombiner(selector: Seq[Selector],
     this
   }
 
-  def newInstance(): Combiner = SelectionCombiner(selector, filter)
+  def newInstance(): Combiner = SelectionCombiner(selector, filter, order)
 
   def outputString: String = {
     values.map(_.mkString(",")).mkString("\n")
@@ -40,7 +45,8 @@ case class SelectionCombiner(selector: Seq[Selector],
 
 case class AggregateCombiner(selector: Seq[Selector],
                              filter: Option[Filter],
-                             group: Field) extends Combiner {
+                             group: Field,
+                             order: Option[Seq[Field]]) extends Combiner {
   var values = Map[String, Array[Aggregate[_]]]()
 
   // Index of the grouping key in the selector
@@ -77,11 +83,18 @@ case class AggregateCombiner(selector: Seq[Selector],
     this
   }
 
-  def newInstance(): Combiner = AggregateCombiner(selector, filter, group)
+  def newInstance(): Combiner = AggregateCombiner(selector, filter, group, order)
 
   def outputString: String = {
-    // TODO: Write output logic
-    //values.map(_.mkString(",")).mkString("\n")
-    ""
+    val holderArray = Array.fill(selector.size)("")
+    val baseSelectZip = baseToSelectIndexes.zipWithIndex
+    values.map { case (groupKey, valueAggs) =>
+      // Construct array of aggs and group in right order
+      holderArray(groupIndex) = groupKey
+      baseSelectZip.foreach { case (bIndex, i) =>
+        holderArray(bIndex) = valueAggs(i).toString
+      }
+      holderArray.mkString(",")
+    } mkString "\n"
   }
 }

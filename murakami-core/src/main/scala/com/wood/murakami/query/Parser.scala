@@ -1,6 +1,7 @@
 package com.wood.murakami.query
 
 import com.wood.murakami.directory.Fields
+import com.wood.murakami.directory.Fields.Field
 
 import scala.util.parsing.combinator._
 
@@ -9,6 +10,8 @@ object Parser extends JavaTokenParsers {
   def parseSelect(s: String) = parseAll(SelectParser.parserSelect, s)
   // Parse a filter statement
   def parseFilter(s: String) = parseAll(FilterParser.innerExpr, s)
+  // Parse a order statement
+  def parseOrder(s: String) = parseAll(OrderParser.parserOrder, s)
 
   // PARSING CLASSES //
   private object SelectParser {
@@ -52,6 +55,13 @@ object Parser extends JavaTokenParsers {
       toUpper ~ ("=" ~> doubleQuotedString) ^^ {
         case field ~ value => Equality(Fields.fields.find(_.stringValue == field).get, value)
     }
+  }
+
+  private object OrderParser {
+    protected[Parser] def parserOrder: Parser[Seq[Field]] =
+      rep1sep(toUpper, ',') ^^ {
+        case fields => fields.map(field => Fields.fields.find(_.stringValue == field).get).toSeq
+      }
   }
 
   private def toUpper: Parser[String] =
