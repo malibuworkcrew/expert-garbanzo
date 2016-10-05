@@ -2,7 +2,7 @@ package com.wood.murakami.executors
 
 import java.io.File
 
-import com.wood.murakami.query.Combiner
+import com.wood.murakami.Combiner
 
 import scala.io.Source
 

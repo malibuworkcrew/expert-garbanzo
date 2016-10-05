@@ -2,9 +2,10 @@ package com.wood.murakami.directory
 
 import java.io.File
 
-import com.wood.murakami.MurakamiService$
+import com.wood.murakami.MurakamiService
 
 object PathFinder {
+  // TODO Respect date filter
   def getPaths(dateFilter: Option[String], fileName: String): Array[File] = {
     val base = new File(MurakamiService.baseDir)
     val yearDirs = base.list().filter(_.matches("\\d{4}")).map(p => new File(base + s"/$p"))

@@ -1,10 +1,9 @@
 package com.wood.murakami
 
 import com.webtrends.harness.app.HActor
-import com.wood.murakami.directory.Fields.Field
 import com.wood.murakami.directory.{Fields, PathFinder}
 import com.wood.murakami.executors.QueryExecutors
-import com.wood.murakami.query.{Filter, Combiner, Parser}
+import com.wood.murakami.query.{Filter, Parser}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,6 +35,7 @@ class QueryActor extends HActor {
               val combined = s.tail.foldLeft(s.head) { case (a, b) =>
                 a ++= b
               }
+              // TODO: Add ordering
               callback ! combined.outputString
             }
           case Failure(f) => callback ! Failure(f)
@@ -57,12 +57,12 @@ class QueryActor extends HActor {
         Some(pFilter.get)
       case None => None
     }
-    val group: Option[Field] = query.group match {
+    query.group match {
       case Some(g) =>
-        Some(Fields.fields.find(_.stringValue == g).get)
-      case None => None
+        val group = Fields.fields.find(_.stringValue == g).get
+        AggregateCombiner(selects.get, filter, group)
+      case None => SelectionCombiner(selects.get, filter)
     }
-    Combiner(selects.get, filter, group)
   }
 
   // Will retry input function `n` times before throwing an error

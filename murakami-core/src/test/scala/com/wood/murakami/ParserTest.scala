@@ -1,16 +1,23 @@
 package com.wood.murakami
 
 import com.wood.murakami.directory.Fields
-import com.wood.murakami.query.{OrExpr, AndExpr, Equality, Parser}
+import com.wood.murakami.query._
 import org.junit.runner.RunWith
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class FilterParserTest extends Specification {
+class ParserTest extends Specification {
   import Fields._
 
-  "Filter" should {
+  "Parser" should {
+    "read out selects and aggs" in {
+      val parsed = Parser.parseSelect("STB:max,TITLE:sum,REV:min,VIEW_TIME:collect,DATE:count")
+      if (!parsed.successful) throw new Exception(parsed.toString)
+      parsed.get mustEqual Seq(Selector(Fields.STB, Some(Max())), Selector(Fields.TITLE, Some(Sum())),
+        Selector(Fields.REV, Some(Min())), Selector(Fields.VIEW_TIME, Some(Collect())), Selector(Fields.DATE, Some(Count())))
+    }
+
     "read basic equality" in {
       val parsed = Parser.parseFilter("STB=\"stb1\"")
       if (!parsed.successful) throw new Exception(parsed.toString)

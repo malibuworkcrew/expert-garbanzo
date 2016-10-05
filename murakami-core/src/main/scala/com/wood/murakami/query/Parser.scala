@@ -19,8 +19,17 @@ object Parser extends JavaTokenParsers {
 
     private def selectExpr: Parser[Selector] =
       toUpper ~ opt(":" ~> toUpper) ^^ {
-        case field ~ agg => Selector(Fields.fields.find(_.stringValue == field).get,
-          None)
+        case field ~ agg =>
+          val matchedAgg: Option[Aggregate[_]] = agg match {
+            case Some("MIN") => Some(Min())
+            case Some("MAX") => Some(Max())
+            case Some("SUM") => Some(Sum())
+            case Some("COUNT") => Some(Count())
+            case Some("COLLECT") => Some(Collect())
+            case None => None
+            case _ => throw new IllegalArgumentException("Nonexistent agg")
+          }
+          Selector(Fields.fields.find(_.stringValue == field).get, matchedAgg)
       }
   }
 
