@@ -1,10 +1,10 @@
-package com.wood.spenk.command
+package com.wood.murakami.command
 
 import akka.actor.ActorRef
 import akka.pattern.ask
 import com.webtrends.harness.command._
 import com.webtrends.harness.component.spray.route.SprayGet
-import com.wood.spenk.Query
+import com.wood.murakami.Query
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}

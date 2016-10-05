@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wood</groupId>
-    <artifactId>spenk-parent</artifactId>
+    <artifactId>murakami-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Spenk Query Language Parent</name>
+    <name>Murakami Query Language Parent</name>
     <packaging>pom</packaging>
     <properties>
         <wookiee.version>1.2.4</wookiee.version>
@@ -22,7 +22,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>spenk-core</module>
+                <module>murakami-core</module>
                 <module>file-importer</module>
             </modules>
         </profile>
@@ -68,14 +68,8 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2-junit_${akka.artifact.version}</artifactId>
-            <version>2.4.15-scalaz-7.0.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalamock</groupId>
-            <artifactId>scalamock-specs2-support_${akka.artifact.version}</artifactId>
-            <version>3.2.1</version>
+            <artifactId>specs2_2.11</artifactId>
+            <version>2.4.15</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

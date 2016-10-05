@@ -1,0 +1,54 @@
+package com.wood.murakami.query
+
+import com.wood.murakami.directory.Fields
+
+import scala.util.parsing.combinator._
+
+object Parser extends JavaTokenParsers {
+  // Parse a select statement
+  def parseSelect(s: String) = parseAll(SelectParser.parserSelect, s)
+  // Parse a filter statement
+  def parseFilter(s: String) = parseAll(FilterParser.innerExpr, s)
+
+  // PARSING CLASSES //
+  private object SelectParser {
+    protected[Parser] def parserSelect: Parser[Seq[Selector]] =
+      rep1sep(selectExpr, ',') ^^ {
+        case selects => selects.toSeq
+      }
+
+    private def selectExpr: Parser[Selector] =
+      toUpper ~ opt(":" ~> toUpper) ^^ {
+        case field ~ agg => Selector(Fields.fields.find(_.stringValue == field).get,
+          None)
+      }
+  }
+
+  private object FilterParser {
+    protected[Parser] def innerExpr: Parser[Filter] = combinedPredicate ^^ { ex => Filter(ex) }
+
+    private def combinedPredicate: Parser[Expr] = predicate ~ rep(("and" | "or") ~ predicate) ^^ {
+      case left ~ right =>
+        var pointer = left
+        right.foreach {
+          case "and" ~ rightOp => pointer = AndExpr(pointer, rightOp)
+          case "or" ~ rightOp => pointer = OrExpr(pointer, rightOp)
+        }
+        pointer
+    }
+
+    private def predicate: Parser[Expr] = "(" ~> combinedPredicate <~ ")" | equality
+
+    private def equality: Parser[Expr] =
+      toUpper ~ ("=" ~> doubleQuotedString) ^^ {
+        case field ~ value => Equality(Fields.fields.find(_.stringValue == field).get, value)
+    }
+  }
+
+  private def toUpper: Parser[String] =
+    ident ^^ {
+      _.toUpperCase
+    }
+
+  private def doubleQuotedString: Parser[String] = stringLiteral ^^ { _.replaceAll("^\"|\"$", "") }
+}

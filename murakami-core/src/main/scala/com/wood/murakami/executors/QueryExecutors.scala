@@ -1,8 +1,8 @@
-package com.wood.spenk.executors
+package com.wood.murakami.executors
 
 import java.io.File
 
-import com.wood.spenk.query.Combiner
+import com.wood.murakami.query.Combiner
 
 import scala.io.Source
 
