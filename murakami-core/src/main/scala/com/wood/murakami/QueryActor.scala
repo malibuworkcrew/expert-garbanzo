@@ -38,7 +38,7 @@ class QueryActor extends HActor {
               val combined = s.tail.foldLeft(s.head) { case (a, b) =>
                 a ++= b
               }
-              // TODO: Add ordering
+              combined.sort
               callback ! combined.outputString
             }
           case Failure(f) => callback ! Failure(f)

@@ -13,7 +13,6 @@ trait Aggregate[T] {
   def typelessCombine(a: Any): this.type = this ++= a.asInstanceOf[this.type]
 }
 
-// TODO compare items based on their field
 case class Min(override var value: Double = Integer.MAX_VALUE
                 ) extends Aggregate[Double] {
   override def +=(add: AnyRef): this.type = {

@@ -3,9 +3,6 @@ package com.wood.murakami
 import com.wood.murakami.directory.Fields.Field
 import com.wood.murakami.query.{Aggregate, Filter, Selector}
 
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
-
 trait Combiner {
   val selector: Seq[Selector]
   val filter: Option[Filter]
@@ -15,6 +12,7 @@ trait Combiner {
   def ++=(agg: Combiner): this.type
   def newInstance(): Combiner
   def outputString: String
+  def sort: this.type
 }
 
 case class SelectionCombiner(selector: Seq[Selector],
@@ -40,6 +38,23 @@ case class SelectionCombiner(selector: Seq[Selector],
 
   def outputString: String = {
     values.map(_.mkString(",")).mkString("\n")
+  }
+
+  def sort: this.type = {
+    if (order.isDefined) {
+      val ord = order.get
+      val ordIndexes = ord.map(o => selector.indexWhere(_.field == o))
+      // Sort with to use the field specific comparisons
+      values = values.sortWith { case (v1, v2) =>
+        val larger = ordIndexes.foldLeft(0) { case (res, ind) =>
+          // If we've already found an inequality, skip remaining checks
+          if (res == 0) selector(ind).field.compare(v1(ind), v2(ind))
+          else res
+        }
+        larger > 0
+      }
+    }
+    this
   }
 }
 
@@ -96,5 +111,9 @@ case class AggregateCombiner(selector: Seq[Selector],
       }
       holderArray.mkString(",")
     } mkString "\n"
+  }
+
+  def sort: this.type = {
+    this
   }
 }
