@@ -26,8 +26,10 @@ class QueryActor extends HActor {
         val paths = PathFinder.getPaths(combiner.filter, fileName)
         // Spin up threads to read each file
         val futures = Future.sequence(paths.map(path => Future {
-          val exec = new QueryExecutors(path, combiner.newInstance())
-          retry[Combiner](3)(exec.execute)
+          retry[Combiner](3) {
+            val exec = new QueryExecutors(path, combiner.newInstance())
+            exec.execute
+          }
         }) toList)
         // Combine results into one data set
         futures.onComplete {
