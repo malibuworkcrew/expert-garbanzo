@@ -75,6 +75,8 @@ EXAMPLE
 >  bin/query -s STB,TITLE:collect,REV:sum -g STB
 
 OUTPUT
-> stb1,[the game,unbreakable,the matrix],18.5
-> stb3,[bruce lee,the matrix],6.0
-> stb2,[mighty ducks,the hobbit],16.0
+>stb1,[the game,unbreakable,the matrix],18.5
+>
+>stb3,[bruce lee,the matrix],6.0
+>
+>stb2,[mighty ducks,the hobbit],16.0
