@@ -64,5 +64,32 @@ class CombinerTest extends Specification {
       combiner.outputString mustEqual
         "stb2,2014-04-02,10:30\nstb2,2014-04-02,9:30\nstb1,2014-04-01,1:30"
     }
+
+    "sort group" in {
+      val fieldsSelector = Seq(Selector(TITLE, Some(Collect())), Selector(STB, None))
+      val combiner = groupCombiner(fieldsSelector, None, STB, Some(Seq(TITLE)))
+      combiner.sort
+      combiner.outputString mustEqual
+        "[the matrix,the hobbit],stb2\n[the matrix],stb1"
+    }
+
+    "return multiple aggs" in {
+      val fieldsSelector = Seq(Selector(STB, Some(Collect())), Selector(TITLE, None),
+        Selector(REV, Some(Max())), Selector(PROVIDER, Some(Count())), Selector(REV, Some(Sum())))
+      val combiner = groupCombiner(fieldsSelector, None, TITLE, Some(Seq(REV)))
+      combiner.sort
+      combiner.outputString mustEqual
+        "[stb2],the hobbit,8.0,1,8.0\n[stb1,stb2],the matrix,4.5,2,8.5"
+    }
+
+    "do all the things" in {
+      val fieldsSelector = Seq(Selector(STB, Some(Collect())), Selector(TITLE, None),
+        Selector(REV, Some(Max())), Selector(PROVIDER, Some(Count())), Selector(REV, Some(Sum())))
+      val filter = Some(Filter(Equality(STB, "stb2")))
+      val combiner = groupCombiner(fieldsSelector, filter, TITLE, Some(Seq(REV)))
+      combiner.sort
+      combiner.outputString mustEqual
+        "[stb2],the hobbit,8.0,1,8.0\n[stb2],the matrix,4.5,1,4.5"
+    }
   }
 }

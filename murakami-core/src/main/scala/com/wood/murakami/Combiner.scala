@@ -70,6 +70,8 @@ case class AggregateCombiner(selector: Seq[Selector],
   val baseAggs: Array[Aggregate[_]] = selector.flatMap(_.agg).toArray
   // Quickly accessible array mapping baseAggs to selector
   val baseToSelectIndexes = selector.zipWithIndex.filter(_._1.agg.isDefined).map(_._2)
+  // Quickly access mapping of selector to baseAggs
+  val selectToBaseIndexes = ((0 until groupIndex) :+ -1) ++ (groupIndex until (selector.size - 1))
 
   def +=(line: String): this.type = {
     val split = line.split('|')
@@ -114,6 +116,25 @@ case class AggregateCombiner(selector: Seq[Selector],
   }
 
   def sort: this.type = {
+    if (order.isDefined) {
+      val ord = order.get
+      val ordIndexes = ord.map(o => selector.indexWhere(_.field == o))
+      // Sort with to use the field specific comparisons
+      values = values.toSeq.sortWith { case (v1, v2) =>
+        val larger = ordIndexes.foldLeft(0) { case (res, ind) =>
+          // If we've already found an inequality, skip remaining checks
+          if (res == 0) {
+            val current = selector(ind)
+            current.agg match {
+              case None => current.field.compare(v1._1, v2._1)
+              case Some(agg) =>
+                v1._2(selectToBaseIndexes(ind)).typelessCompare(v2._2(selectToBaseIndexes(ind)))
+            }
+          } else res
+        }
+        larger > 0
+      } toMap
+    }
     this
   }
 }
