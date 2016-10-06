@@ -32,6 +32,6 @@ esac
 shift # past argument or value
 done
 QUERY=`echo $QUERY | sed 's/&/?/'`
-echo $QUERY
+# echo $QUERY
 curl -X GET "http://localhost:8090/v1/query$QUERY"
 
