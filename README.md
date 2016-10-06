@@ -36,3 +36,12 @@ A simple select query will look across all data to get all the specified columns
 
 EXAMPLE
 > bin/query -s STB,TITLE
+
+# Ordering Results
+Any query can be ordered, simply input any number of columns and the query
+will be ordered by those columns starting with the first (each following
+column is used to break ties)
+> bin/query -s $column1,$column2,$column3 -o $column1,$column3
+
+EXAMPLE
+> bin/query -s STB,TITLE -o STB

@@ -1,5 +1,5 @@
 #!/bin/bash
 echo "Reading path $1"
 URL=${1%$'\r'}
-URL="http://localhost:8080/v1/import?path=$URL"
+URL="http://localhost:8093/v1/import?path=$URL"
 curl -X GET "$URL"
