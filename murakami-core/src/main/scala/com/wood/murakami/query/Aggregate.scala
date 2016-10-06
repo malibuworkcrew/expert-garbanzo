@@ -1,7 +1,5 @@
 package com.wood.murakami.query
 
-import com.wood.murakami.directory.Fields.Field
-
 import scala.collection.mutable
 
 trait Aggregate[T] {
