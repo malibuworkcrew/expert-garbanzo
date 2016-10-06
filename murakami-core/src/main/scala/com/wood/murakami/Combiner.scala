@@ -3,6 +3,8 @@ package com.wood.murakami
 import com.wood.murakami.directory.Fields.Field
 import com.wood.murakami.query.{Aggregate, Filter, Selector}
 
+// Combinable class for gathering data from files in parallel
+// and combining all results
 trait Combiner {
   val selector: Seq[Selector]
   val filter: Option[Filter]
@@ -15,6 +17,7 @@ trait Combiner {
   def sort: this.type
 }
 
+// For selection queries with no aggregates or group
 case class SelectionCombiner(selector: Seq[Selector],
                              filter: Option[Filter],
                              order: Option[Seq[Field]]) extends Combiner {
@@ -58,6 +61,7 @@ case class SelectionCombiner(selector: Seq[Selector],
   }
 }
 
+// Aggregate class for a group and aggregates
 case class AggregateCombiner(selector: Seq[Selector],
                              filter: Option[Filter],
                              group: Field,

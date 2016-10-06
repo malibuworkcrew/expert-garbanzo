@@ -14,6 +14,7 @@ object QueryDataCommand {
   val commandName = "QueryDataCommand"
 }
 
+// Rest endpoint allowing us to send queries to the running server
 class QueryDataCommand(queryLeader: ActorRef) extends Command with SprayGet {
   override def commandName: String = QueryDataCommand.commandName
   override def path: String = "/v1/query"

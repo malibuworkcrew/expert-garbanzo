@@ -5,6 +5,7 @@ import com.wood.murakami.directory.Fields.Field
 
 import scala.util.parsing.combinator._
 
+// Class to hold all our parser logic for query language
 object Parser extends JavaTokenParsers {
   // Parse a select statement
   def parseSelect(s: String) = parseAll(SelectParser.parserSelect, s)

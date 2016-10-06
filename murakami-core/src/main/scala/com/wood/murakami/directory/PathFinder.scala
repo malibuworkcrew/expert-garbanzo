@@ -5,6 +5,7 @@ import java.io.File
 import com.wood.murakami.MurakamiService
 import com.wood.murakami.query.Filter
 
+// Class for reading directories to find all files to scan
 object PathFinder {
   case class DateFile(date: String, file: File)
 

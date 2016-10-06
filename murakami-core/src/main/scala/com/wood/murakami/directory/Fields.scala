@@ -2,6 +2,7 @@ package com.wood.murakami.directory
 
 import java.text.SimpleDateFormat
 
+// Holder for field specific functionality
 object Fields {
   val hourFormat = new SimpleDateFormat("HH:mm")
   val dayFormat = new SimpleDateFormat("yyyy-MM-dd")

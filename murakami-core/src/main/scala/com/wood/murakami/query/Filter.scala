@@ -2,6 +2,7 @@ package com.wood.murakami.query
 
 import com.wood.murakami.directory.Fields.{DATE, Field}
 
+// Trait for all our boolean filter logic
 trait Expr {
   def check(line: Array[String], date: Boolean = false): Boolean
 }

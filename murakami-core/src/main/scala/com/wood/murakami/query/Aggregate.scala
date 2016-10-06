@@ -2,6 +2,7 @@ package com.wood.murakami.query
 
 import scala.collection.mutable
 
+// Trait for defining new aggregation behavior
 trait Aggregate[T] {
   var value: T
   // Combine two Aggregate objects
@@ -76,6 +77,7 @@ case class Sum(override var value: Double = 0.0) extends Aggregate[Double] {
   override def newInstance(): Sum = Sum()
 }
 
+// Counts unique values encountered
 case class Count(override var value: mutable.HashSet[AnyRef] = mutable.HashSet[AnyRef]())
   extends Aggregate[mutable.HashSet[AnyRef]] {
   override def +=(add: AnyRef): this.type = {
@@ -96,6 +98,7 @@ case class Count(override var value: mutable.HashSet[AnyRef] = mutable.HashSet[A
   override def newInstance(): Count = Count()
 }
 
+// Collects all unique values
 case class Collect(override var value: mutable.HashSet[AnyRef] = mutable.HashSet[AnyRef]()) extends Aggregate[mutable.HashSet[AnyRef]] {
   override def +=(add: AnyRef): this.type = {
     value += add

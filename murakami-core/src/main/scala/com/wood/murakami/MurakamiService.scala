@@ -16,6 +16,7 @@ object MurakamiService {
   var baseDir = "../data"
 }
 
+// Main class, starts on Wookiee startup and creates our QueryActor router
 class MurakamiService extends SprayService {
   val queryLeaders = context.actorOf(RoundRobinPool(5).props(Props[QueryActor]), "QueryActor")
   MurakamiService.baseDir = Try { context.system.settings.config.getString("base-data-dir") } getOrElse "../data"
@@ -25,7 +26,8 @@ class MurakamiService extends SprayService {
   override def serviceReceive = ({
     case Ready(meta) =>
       log.info("MurakamiService ready to receive")
-      addCommandWithProps(QueryDataCommand.commandName, Props(classOf[QueryDataCommand], queryLeaders))
+      addCommandWithProps(QueryDataCommand.commandName,
+        Props(classOf[QueryDataCommand], queryLeaders))
   }: Receive) orElse super.serviceReceive
 
   override def checkHealth: Future[HealthComponent] =
