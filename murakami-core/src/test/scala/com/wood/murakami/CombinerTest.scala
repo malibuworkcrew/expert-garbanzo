@@ -38,7 +38,7 @@ class CombinerTest extends Specification {
       val fieldsSelector = Seq(Selector(STB, None), Selector(TITLE, None))
       val combiner = basicCombiner(fieldsSelector, None, None)
       combiner.outputString mustEqual
-        "stb1,the matrix\nstb2,the hobbit\nstb2,the matrix"
+        "stb1,the matrix\nstb2,the hobbit\nstb2,the matrix\n"
     }
 
     "filter lines" in {
@@ -46,7 +46,7 @@ class CombinerTest extends Specification {
       val filter = Some(Filter(Equality(Fields.TITLE, "the matrix")))
       val combiner = basicCombiner(fieldsSelector, filter, None)
       combiner.outputString mustEqual
-        "stb1,the matrix\nstb2,the matrix"
+        "stb1,the matrix\nstb2,the matrix\n"
     }
 
     "group lines" in {
@@ -54,7 +54,7 @@ class CombinerTest extends Specification {
         Selector(REV, Some(Sum())), Selector(PROVIDER, Some(Count())))
       val combiner = groupCombiner(fieldsSelector, None, TITLE, None)
       combiner.outputString mustEqual
-        "[stb1,stb2],the matrix,8.5,2\n[stb2],the hobbit,8.0,1"
+        "[stb1,stb2],the matrix,8.5,2\n[stb2],the hobbit,8.0,1\n"
     }
 
     "sort select" in {
@@ -62,7 +62,7 @@ class CombinerTest extends Specification {
       val combiner = basicCombiner(fieldsSelector, None, Some(Seq(DATE, VIEW_TIME)))
       combiner.sort
       combiner.outputString mustEqual
-        "stb2,2014-04-02,10:30\nstb2,2014-04-02,9:30\nstb1,2014-04-01,1:30"
+        "stb2,2014-04-02,10:30\nstb2,2014-04-02,9:30\nstb1,2014-04-01,1:30\n"
     }
 
     "sort group" in {
@@ -70,7 +70,7 @@ class CombinerTest extends Specification {
       val combiner = groupCombiner(fieldsSelector, None, STB, Some(Seq(TITLE)))
       combiner.sort
       combiner.outputString mustEqual
-        "[the matrix,the hobbit],stb2\n[the matrix],stb1"
+        "[the matrix,the hobbit],stb2\n[the matrix],stb1\n"
     }
 
     "return multiple aggs" in {
@@ -79,7 +79,7 @@ class CombinerTest extends Specification {
       val combiner = groupCombiner(fieldsSelector, None, TITLE, Some(Seq(REV)))
       combiner.sort
       combiner.outputString mustEqual
-        "[stb2],the hobbit,8.0,1,8.0\n[stb1,stb2],the matrix,4.5,2,8.5"
+        "[stb2],the hobbit,8.0,1,8.0\n[stb1,stb2],the matrix,4.5,2,8.5\n"
     }
 
     "do all the things" in {
@@ -89,7 +89,7 @@ class CombinerTest extends Specification {
       val combiner = groupCombiner(fieldsSelector, filter, TITLE, Some(Seq(REV)))
       combiner.sort
       combiner.outputString mustEqual
-        "[stb2],the hobbit,8.0,1,8.0\n[stb2],the matrix,4.5,1,4.5"
+        "[stb2],the hobbit,8.0,1,8.0\n[stb2],the matrix,4.5,1,4.5\n"
     }
   }
 }

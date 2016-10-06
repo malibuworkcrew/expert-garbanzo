@@ -40,7 +40,7 @@ case class SelectionCombiner(selector: Seq[Selector],
   def newInstance(): Combiner = SelectionCombiner(selector, filter, order)
 
   def outputString: String = {
-    values.map(_.mkString(",")).mkString("\n")
+    values.map(_.mkString(",")).mkString("", "\n", "\n")
   }
 
   def sort: this.type = {
@@ -116,7 +116,7 @@ case class AggregateCombiner(selector: Seq[Selector],
         holderArray(bIndex) = valueAggs(i).toString
       }
       holderArray.mkString(",")
-    } mkString "\n"
+    } mkString ("", "\n", "\n")
   }
 
   def sort: this.type = {
