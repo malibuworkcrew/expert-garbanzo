@@ -80,3 +80,11 @@ OUTPUT
 >stb3,[bruce lee,the matrix],6.0
 >
 >stb2,[mighty ducks,the hobbit],16.0
+
+## Future Ideas
+* Switch to using column oriented storage for compaction and faster reads
+* Parallelize the final combination step
+* Order each combiner in parallel before final combination so that sorts are divide-and-conquer
+* Don't restrict order of columns, and make taking in new columns seamless
+* Metrics and healthchecks
+
