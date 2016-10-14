@@ -2,8 +2,7 @@
 To take advantage of functionality, one has to start up each of the
 two services.
 
-There are two services:
-## file-importer
+## File Import Service
 Reads in files and stores data in the data/ directory
 
 ### Starting the Import Service
@@ -16,7 +15,7 @@ One can use the importData script in bin/ like so:
 The input argument is the path of the file to import. The file must contain
 all columns and must have a header, the columns can be in any order.
 
-## murakami-core (Query Service)
+## Query Service
 Queries stored data using a robust query language
 
 ### Starting the Query Service
