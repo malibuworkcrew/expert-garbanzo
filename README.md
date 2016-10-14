@@ -5,7 +5,7 @@ two services.
 ## File Import Service
 Reads in files and stores data in the data/ directory
 
-### Starting the Import Service
+#### Starting the Import Service
 java -Dconfig.file=conf/import.conf -jar dist/file-importer-1.0-SNAPSHOT-shaded.jar
 
 ### To Read a File
@@ -18,13 +18,13 @@ all columns and must have a header, the columns can be in any order.
 ## Query Service
 Queries stored data using a robust query language
 
-### Starting the Query Service
+#### Starting the Query Service
 java -Dconfig.file=conf/query.conf -jar dist/murakami-core-1.0-SNAPSHOT-shaded.jar
 
-## To Query the Service
+### To Query the Service
 Any combination of the below query methods can be used to return data.
 
-### Available Columns
+#### Available Columns
 * STB (String)
 * TITLE (String)
 * REV (Double)
@@ -32,14 +32,14 @@ Any combination of the below query methods can be used to return data.
 * DATE (Date)
 * PROVIDER (String)
 
-### Select Queries
+#### Select Queries
 A simple select query will look across all data to get all the specified columns
 > bin/query -s $column1,$column2,...
 
 EXAMPLE
 > bin/query -s STB,TITLE
 
-### Ordering Results
+#### Ordering Results
 Any query can be ordered, simply input any number of columns and the query
 will be ordered by those columns starting with the first (each following
 column is used to break ties)
@@ -48,7 +48,7 @@ column is used to break ties)
 EXAMPLE
 > bin/query -s STB,TITLE -o STB
 
-### Advanced Filtering of Results
+#### Advanced Filtering of Results
 Queries can be filtered with checks on equality for any column (in the strict format $col="$val"),
 also one can combine any number of 'and' or 'or' statements to create a filter.
 > bin/query -s $column1,$column2,... -f '$column1=$value1 and ($column2 = $value2 or $column1=$value3) ...'
@@ -56,7 +56,7 @@ also one can combine any number of 'and' or 'or' statements to create a filter.
 EXAMPLE
 > bin/query -s STB,TITLE -f 'STB="stb1" or (STB="stb2" and TITLE="the hobbit")'
 
-### Grouping and Aggregating
+#### Grouping and Aggregating
 Instead of a raw select, one can choose to aggregate data for each column based on a column
 group. To use this functionality one will have to set a group and specify aggregates for
 all other columns.
